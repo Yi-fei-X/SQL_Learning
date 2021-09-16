@@ -1,6 +1,7 @@
 /*
 1. Result Set is the output data we want.
 2. Union extracts the row we specifiy while Union all extracts all the rows.
+3. Union, intersect, except.
 4. Union bascially just put the two datasets one after another while join is to combine two different datasets.
 5. Inner join will only output the rows that in both tables, outer join will select some rows that only in one table and do not have a match in the other table.
 6. Left join is a kind of outer join.
