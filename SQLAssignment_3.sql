@@ -39,7 +39,7 @@ join [Order Details] as od
 on o.OrderID = od.OrderID
 group by c.City
 
---5???
+--5
 select c.city, count(1) as number_of_customers
 from Customers as c
 group by c.City
@@ -68,7 +68,7 @@ join Orders as o
 on c.CustomerID = o.CustomerID
 where c.City != o.ShipCity
 
---8???
+--8
 with Product_City
 as
 (
