@@ -19,3 +19,27 @@ If you want to show some information when there are some specific execuations or
 10.	What is the difference between Trigger and Stored Procedure?
 Trigger is a special type of stored precedure that can be automatically executed when specific event happened.
 */
+
+--1.	Lock tables Region, Territories, EmployeeTerritories and Employees. Insert following information into the database. In case of an error, no changes should be made to DB.
+--a.	A new region called “Middle Earth”;
+--b.	A new territory called “Gondor”, belongs to region “Middle Earth”;
+--c.	A new employee “Aragorn King” who's territory is “Gondor”.
+
+--2.	Change territory “Gondor” to “Arnor”.
+
+--3.	Delete Region “Middle Earth”. (tip: remove referenced data first) (Caution: do not forget WHERE or you will delete everything.) In case of an error, no changes should be made to DB. Unlock the tables mentioned in question 1.
+begin transaction
+insert into region values (5, 'Middle Earth')
+insert into Territories values (99999, 'Gondor', 5)
+insert into Employees(FirstName, LastName) values('Aragon', 'King')
+insert into EmployeeTerritories values((select e.EmployeeID
+from Employees as e where FirstName = 'Aragon'), 99999)
+--------
+update Territories set TerritoryDescription = 'Arnor' where TerritoryDescription = 'Gondor'
+--------
+delete from EmployeeTerritories where TerritoryID = 99999
+delete from Territories where RegionID = 5
+delete from Region where RegionID = 5
+rollback
+
+--4.	Create a view named “view_product_order_[your_last_name]”, list all products and total ordered quantity for that product.
