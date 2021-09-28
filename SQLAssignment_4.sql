@@ -43,3 +43,52 @@ delete from Region where RegionID = 5
 rollback
 
 --4.	Create a view named “view_product_order_[your_last_name]”, list all products and total ordered quantity for that product.
+create view view_product_order_xiang
+as
+select p.ProductName, sum(od.Quantity) as total_quantity
+from Products as p
+inner join [Order Details] od
+on p.ProductID = od.ProductID
+group by p.ProductName
+
+--5.	Create a stored procedure “sp_product_order_quantity_[your_last_name]” that accept product id as an input and total quantities of order as output parameter.
+create procedure sp_product_order_quantity_xiang
+@id int
+as
+begin
+	return
+	(select sum(Quantity)
+	from [Order Details] as od
+	where od.ProductID = @id
+	group by od.productID)
+end
+
+--go
+--declare @temp int
+--exec @temp = sp_product_order_quantity_xiang 1
+--print @temp
+
+--6.	Create a stored procedure “sp_product_order_city_[your_last_name]” that accept product name as an input and top 5 cities that ordered most that product combined with the total quantity of that product ordered from that city as output.
+create procedure sp_product_order_city_xiang
+@PName varchar(20)
+as 
+begin
+	select dt.ProductName, dt.Country, dt.City, dt.total_quantity, dt.rnk
+	from
+	(select p.ProductName, c.Country, c.City, sum(od.Quantity) as total_quantity, DENSE_RANK() over(partition by p.productname order by p.productname, sum(od.Quantity) desc) as rnk
+	from Orders as o 
+	inner join Customers as c
+	on o.CustomerID = c.CustomerID
+	inner join [Order Details] as od
+	on o.OrderID = od.OrderID
+	inner join Products as p
+	on p.ProductID = od.ProductID
+	group by p.ProductName, c.Country, c.City) as dt
+	where rnk <= 5 and dt.ProductName = @PName 
+end
+
+--go
+--declare @temp int
+--exec @temp = sp_product_order_city_xiang 'Alice Mutton'
+--print @temp
+
